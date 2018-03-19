@@ -4,7 +4,7 @@
 0. try to have python 3.6 installed (not sure if it works without it)
 1. open command and use cd to navigate to desired folder you want to store the project in.
 2. execute these commands:
-
+```
 	# clone the repository
 	git clone https://github.com/cs-peers-connect/pongpython.git
 	
@@ -16,3 +16,4 @@
 	
 	# or 
 	python3 -m pygame.examples.aliens
+```
