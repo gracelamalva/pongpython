@@ -1,0 +1,160 @@
+import pygame
+import sys
+import random
+
+
+pygame.init()
+clock = pygame.time.Clock()
+
+#colors
+white = (255,255,255)
+black = (0,0,0)
+red = (255,0,0)
+green = (0,255,0)
+blue = (0,0,255)
+
+#window
+wsize= resolution= wwidth, wheight = 800,600
+window = pygame.display.set_mode(wsize)
+pygame.display.set_caption("Classic Pong")
+
+#font
+score_font = pygame.font.SysFont("Clear Sans Regular", 30)
+
+
+#paddles
+l_paddle_startx = 50
+l_paddle_x = l_paddle_startx
+l_paddle_starty = wheight / 2
+l_paddle_y = l_paddle_starty
+l_paddle_can_up = True
+l_paddle_can_down = True
+
+
+r_paddle_startx = 750
+r_paddle_x = r_paddle_startx
+r_paddle_starty = wheight/ 2
+r_paddle_y = r_paddle_starty
+r_paddle_can_up = True
+r_paddle_can_down = True
+
+#ball
+ball_start_x = wwidth/2
+ball_start_y = wheight /2
+ball_x = ball_start_x
+ball_y = ball_start_y
+
+cafx=500
+cafy= 500
+
+#score
+score_left = 0
+score_right = 0
+#input map
+input_map = [False, False, False, False]
+
+gameExit = False
+
+while not gameExit:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            gameExit=True
+            pygame.quit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_DOWN:
+                input_map[0] = True
+            if event.key == pygame.K_UP:
+                input_map[1] = True
+            if event.key == pygame.K_s:
+                input_map[2] = True
+            if event.key == pygame.K_w:
+                input_map[3] = True
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_DOWN:
+                input_map[0] = False
+            if event.key == pygame.K_UP:
+                input_map[1] = False
+            if event.key == pygame.K_s:
+                input_map[2] = False
+            if event.key == pygame.K_w:
+                input_map[3] = False
+
+
+    if r_paddle_y < -50:
+        r_paddle_can_down = False
+    else:
+        r_paddle_can_down = True
+
+    if r_paddle_y > wheight - 50:
+        r_paddle_can_up = False
+    else:
+        r_paddle_can_up = True
+
+    if l_paddle_y <-50:
+        l_paddle_can_down = False
+    else:
+        l_paddle_can_down = True
+
+    if l_paddle_y > wheight -50:
+        l_paddle_can_up = False
+    else:
+        l_paddle_can_up = True
+
+
+    if r_paddle_can_down:
+        if input_map[0]: r_paddle_y+=10
+    if r_paddle_can_up:
+        if input_map[1]: r_paddle_y-=10
+    if l_paddle_can_down:
+        if input_map[2]: l_paddle_y+= 10
+    if l_paddle_can_up:
+        if input_map[3]: l_paddle_y-=10
+
+    #ball movement
+    ball_time_passed = clock.tick(60)
+    ball_time_sec = ball_time_passed / 1000
+    ball_x += cafx * ball_time_sec
+    ball_y += cafy * ball_time_sec
+
+    #ball collision
+    if ball_y > wheight or ball_y <0:
+        cafy = -cafy
+    if ball_x > r_paddle_x or ball_x < l_paddle_x:
+        if ball_y > r_paddle_y and ball_y < r_paddle_y + 100:
+            cafx = -cafx
+        if ball_y > l_paddle_y and ball_y < l_paddle_y + 100:
+            cafx = -cafx
+
+
+
+
+    #clear screen
+    window.fill(white)
+
+    #end game
+    if ball_x > wwidth:
+        score_left +=1
+        ball_x = ball_start_x
+        ball_y = ball_start_y
+    if ball_x < 0:
+        score_right +=1
+        ball_x = ball_start_x
+        ball_y = ball_start_y
+
+
+    #draw
+    pygame.draw.rect(window,blue, [l_paddle_x, l_paddle_y, 10, 100])
+    pygame.draw.rect(window,blue, [r_paddle_x, r_paddle_y, 10, 100])
+    pygame.draw.rect(window, red, [ball_x,ball_y,20,20])
+    window.blit(score_font.render(str(score_left), True, black), (wwidth/4, 50))
+    window.blit(score_font.render(str(score_right), True, black ), (wwidth/1.25, 50))
+
+
+    #update display content
+    pygame.display.flip()
+
+    #fps
+    clock.tick(50)
+
+
+    #pygame.quit()
